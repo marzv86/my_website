@@ -1,19 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta dir="rtl">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mahdiyar net</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#030705">
+<title>MAHDIYAR RAZAVIZADEH</title>
+<style>
+:root{--bg:#030705;--green:#9dffb0;--dim:#4e9d65;--soft:#b9d9c0}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--soft);font-family:"DejaVu Sans Mono","Liberation Mono","Courier New",monospace}
+body{overflow:hidden}
+#matrix{position:fixed;inset:0;width:100%;height:100%;opacity:.22;z-index:0}
+.scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.22) 4px);mix-blend-mode:multiply}
+.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 20%,rgba(0,0,0,.82) 100%)}
+main{position:relative;z-index:3;min-height:100svh;display:grid;place-items:center;padding:28px}
+.frame{width:min(100%,980px);text-align:center;position:relative;padding:clamp(30px,7vw,82px) 20px}
+.corner{position:absolute;width:38px;height:38px;border-color:var(--dim);opacity:.8}
+.tl{top:0;left:0;border-top:1px solid;border-left:1px solid}.tr{top:0;right:0;border-top:1px solid;border-right:1px solid}
+.bl{bottom:0;left:0;border-bottom:1px solid;border-left:1px solid}.br{bottom:0;right:0;border-bottom:1px solid;border-right:1px solid}
+.hello{font-size:clamp(18px,3vw,30px);font-weight:400;letter-spacing:.12em;color:var(--green);text-shadow:0 0 8px rgba(85,255,130,.65),0 0 28px rgba(85,255,130,.28);margin:0 0 20px;animation:flicker 5s infinite}
+.hash{color:#6ab77b}
+.tagline{font-size:clamp(11px,1.7vw,16px);letter-spacing:.08em;color:#b3cbb8;margin:0 0 clamp(42px,8vh,78px);opacity:0;animation:rise .8s .5s forwards}
+.name{position:relative;margin:0;color:#e0ffe5;font-size:clamp(22px,5vw,48px);font-weight:400;letter-spacing:.08em;line-height:1.35;text-shadow:0 0 12px rgba(102,255,139,.35);animation:rise .9s .9s both}
+.name:after{content:"";display:block;width:min(360px,65%);height:1px;margin:24px auto 18px;background:linear-gradient(90deg,transparent,var(--dim),var(--green),var(--dim),transparent);box-shadow:0 0 12px var(--dim);transform:scaleX(0);animation:line 1s 1.7s forwards}
+.role{margin:0;color:var(--green);font-size:clamp(12px,2vw,17px);letter-spacing:.16em;text-transform:lowercase;opacity:0;animation:rise .8s 2s forwards}
+.cursor{display:inline-block;width:.62em;height:1em;background:var(--green);vertical-align:-.12em;margin-left:5px;box-shadow:0 0 10px var(--green);animation:blink 1s steps(2,start) infinite}
+.glitch{animation:glitch 7s infinite}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes line{to{transform:scaleX(1)}}
+@keyframes blink{to{opacity:0}}
+@keyframes flicker{0%,18%,22%,100%{opacity:1}20%,21%{opacity:.45}65%{text-shadow:0 0 4px var(--green)}}
+@keyframes glitch{0%,94%,100%{transform:translate(0)}95%{transform:translate(1px,-1px)}96%{transform:translate(-2px,1px)}97%{transform:translate(0)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.tagline,.role{opacity:1}.name:after{transform:scaleX(1)}}
+</style>
 </head>
-<body style="color: #09ff00; background-color: rgb(0, 0, 0); text-align:center">
-    <h1><b>hello world </b></h1><br>
-    <h2>there is no place like 127.0.0.1</h2>
-    <h3><i><del>mahdiyar razavizadeh</del></i></h3>
-    <img src="image001.jpg" width="300px" style="display:block; margin:auto;">
+<body>
+<canvas id="matrix" aria-hidden="true"></canvas>
+<div class="vignette"></div><div class="scanlines"></div>
+<main>
+  <section class="frame" aria-label="Personal landing page">
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <h1 class="hello"><span class="hash">#</span> hello world</h1>
+    <p class="tagline">## there is no place like 127.0.0.1</p>
+    <h2 class="name glitch">MAHDIYAR RAZAVIZADEH</h2>
+    <p class="role">cyber security reseacher<span class="cursor"></span></p>
+  </section>
+</main>
+<script>
+(() => {
+ const canvas=document.getElementById('matrix'),ctx=canvas.getContext('2d');
+ const chars='01アイウエオカキクケコサシスセソタチツテト<>{}[]/\\\\';
+ let cols=[],font=15,w=0,h=0,dpr=1;
+ function resize(){
+   dpr=Math.min(devicePixelRatio||1,2);w=innerWidth;h=innerHeight;
+   canvas.width=Math.floor(w*dpr);canvas.height=Math.floor(h*dpr);
+   canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
+   const count=Math.ceil(w/font);cols=Array.from({length:count},()=>Math.random()*-h/font);
+ }
+ const font=15;
+ function draw(){
+   ctx.fillStyle='rgba(3,7,5,.075)';ctx.fillRect(0,0,w,h);
+   ctx.font=font+'px monospace';ctx.fillStyle='#65d981';
+   for(let i=0;i<cols.length;i++){
+     const ch=chars[Math.floor(Math.random()*chars.length)];
+     const x=i*font,y=cols[i]*font;
+     ctx.globalAlpha=.25+Math.random()*.55;ctx.fillText(ch,x,y);
+     if(y>h&&Math.random()>.975)cols[i]=0;else cols[i]+=.55+Math.random()*.45;
+   }
+   ctx.globalAlpha=1;requestAnimationFrame(draw);
+ }
+ addEventListener('resize',resize);resize();draw();
+})();
+</script>
 </body>
-
 </html>
-
-
-
